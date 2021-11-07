@@ -12,7 +12,7 @@
 
 ## 1. Introduction
 
->![](D:\Users\xiang\Desktop\1.png)
+>![](https://github.com/cnwxi/Note-of-Skeleton-Based-Action-Recognition/blob/5505d1311187e2ecce03f6ac77e31a25336f78d4/1.png)
 >Figure 1: (a) Factorized spatial and temporal modeling on skeleton graph sequences causes indirect information flow. `(a) 分离的骨架图序列时间和空间建模导致间接的信息流。`(b) In this work, we propose to capture cross-spacetime correlations with unified spatial-temporal graph convolutions. ` (b) 在这项工作中，我们提出使用统一的时空图卷积来捕获跨时空的相关性。` (c) Disentangling node features at separate spatial-temporal neighborhoods (yellow, blue, red at different distances, partially colored for clarity) is pivotal for effective multi-scale learning in the spatial-temporal domain.`(c) 在不同的时空邻域中分离节点特征（不同距离的黄、蓝、红，部分上色用于区分）对于时空域中的有效的多尺度学习而言十分关键。`
 
 
