@@ -4,13 +4,13 @@
 
 
 
-## Abstract
+## Abstract `摘要`
 
    Spatial-temporal graphs have been widely used by skeleton-based action recognition algorithms to model human action dynamics. `时空图被广泛应用于基于骨架的动作识别算法来对人类动作动态进行建模。`To capture robust movement patterns from these graphs, long-range and multi-scale context aggregation and spatial-temporal dependency modeling are critical aspects of a powerful feature extractor. `为了从这些图片中获取稳健的运动模式，长期和多尺度的上下文聚合和时空依赖建模是一个强大的特征提取器的重要方面。`However, existing methods have limitations in achieving (1) unbiased long-range joint relationship modeling under multi-scale operators and (2) unobstructed cross-spacetime information flow for capturing complex spatial-temporal dependencies. `但是，现有方法在实现 (1) 在多尺度算子下的无偏差长期关节关系建模和 (2) 为捕捉复杂时空依赖的流畅的跨时空信息流等方面存在局限。`In this work, we present (1) a simple method to disentangle multi-scale graph convolutions and (2) a unified spatial-temporal graph convolutional operator named G3D. `在这项工作中，我们提出了 (1) 一个用于分解多尺度图卷积的简单方法和 (2) 一种统一的时空图卷积算子，G3D。`The proposed multi-scale aggregation scheme disentangles the importance of nodes in different neighborhoods for effective long-range modeling. `所提到的多尺度聚合方法解决了在不同邻域中节点对于长期建模的重要性。`The proposed G3D module leverages dense cross-spacetime edges as skip connections for direct information propagation across the spatial-temporal graph. `所提到的G3D模型利用稠密的跨时空边界作为跳跃连接，用于时空图之间直接的信息传播。`By coupling these proposals, we develop a powerful feature extractor named MS-G3D based on which our model outperforms previous state-of-the-art methods on three large-scale datasets: NTU RGB+D 60, NTU RGB+D 120, and Kinetics Skeleton 400. `综上所述，我们开发了一个强大的特征提取器MS-G3D。基于它，我们在3个大规模数据集NTU RGB+D 60、NTU RGB+D 120和Kinetics Skeleton 400上的性能优于之前最先进的方法。`
 
 
 
-## 1. Introduction
+## 1. Introduction `引言`
 
 >![](https://github.com/cnwxi/Note-of-Skeleton-Based-Action-Recognition/blob/56d942df476cd37bf16103b64b098501bbf5122f/image/1.png)
 >
@@ -20,7 +20,7 @@
 
 
 
-​    Human action recognition is an important task with many real-world applications. `人类动作识别是许多现实应用中的一项重要任务。`In particular, skeleton-based human action recognition involves predicting actions from skeleton representations of human bodies instead of raw RGB videos, and the significant results seen in recent work [^50] [^33] [^32][^34][^21][^20 ][^54][^35] have proven its merits. `特别地，基于骨架的人类动作识别涉及从人类身体的骨架表征预测动作，而非原始的RGB视频，并且最近的工作中发现的一些有意义的结果证明了它的优势。`In contrast to RGB representations, skeleton data contain only the 2D [^50][^15] or 3D [^31][^25] positions of the human key joints, providing highly abstract information that is also free of environmental noises (e.g. background clutter, lighting conditions, clothing), allowing action recognition algorithms to focus on the robust features of the action. `对比RGB表征，骨架数据只包含人体关键关节2D或3D位置，提供了高度抽象的信息并且没有环境噪声（如背景杂波、光照条件、衣服），使得动作识别算法可以专注于动作的稳健特征。`
+​    Human action recognition is an important task with many real-world applications. `人类动作识别是许多现实应用中的一项重要任务。`In particular, skeleton-based human action recognition involves predicting actions from skeleton representations of human bodies instead of raw RGB videos, and the significant results seen in recent work [^50][^33][^32][^34][^21][^20 ][^54][^35] have proven its merits. `特别地，基于骨架的人类动作识别涉及从人类身体的骨架表征预测动作，而非原始的RGB视频，并且最近的工作中发现的一些有意义的结果证明了它的优势。`In contrast to RGB representations, skeleton data contain only the 2D [^50][^15] or 3D [^31][^25] positions of the human key joints, providing highly abstract information that is also free of environmental noises (e.g. background clutter, lighting conditions, clothing), allowing action recognition algorithms to focus on the robust features of the action. `对比RGB表征，骨架数据只包含人体关键关节2D或3D位置，提供了高度抽象的信息并且没有环境噪声（如背景杂波、光照条件、衣服），使得动作识别算法可以专注于动作的稳健特征。`
 
 ​    Earlier approaches to skeleton-based action recognition treat human joints as a set of independent features, and they model the spatial and temporal joint correlations through hand-crafted [^42][^43] or learned [^31][^6][^48][^54] aggregations of these features. `早期的基于骨架的动作识别方法将人体关节看作一组独立的特征，他们通过手动制造的或者学习的特征的集合来建模时间和空间上关节的相关性。`However, these methods overlook the inherent relationships between the human joints, which are best captured with human skeleton graphs with joints as nodes and their natural connectivity (i.e. “bones”) as edges. `然而，这些方法忽视了人体关节之间的内在关系，这种关系最好利用人体骨架图来捕捉，人体骨架图中的关节为节点，它们的自然连接（即“骨头”）为边。`For this reason, recent approaches [^50][^34][^35][^32] model the joint movement patterns of an action with a skeleton spatial-temporal graph, which is a series of disjoint and isomorphic skeleton graphs at different time steps carrying information in both spatial and temporal dimensions. `因此，最近的研究方法利用骨架时空图建立了动作的关节运动模式的模型，骨架时空图是一系列不相交、同构的不同时间步长的骨架图，携带空间和时间维度上的信息。`
 
@@ -36,15 +36,15 @@ Another desirable characteristic of robust algorithms is the ability to leverage
 
 (iii) Integrating the disentangled aggregation scheme with G3D gives a powerful feature extractor (MS-G3D) with multi-scale receptive fields across both spatial and temporal dimensions. `将解藕聚合方案与 G3D 相结合，提供了一个强大的特征提取器(MS-G3D) ，具有跨时空的多尺度感受野。 `The direct multi-scale aggregation of features in spacetime further boosts model performance. `时空特征的直接多尺度聚合进一步提高了模型性能。`
 
-## 2. Related Work
+## 2. Related Work `相关工作`
 
-### 2.1. Neural Nets on Graphs
+### 2.1. Neural Nets on Graphs `图神经网络`
 
 **Architectures**. `架构`To extract features from arbitrarily structured graphs, Graph Neural Networks (GNNs) have been developed and explored extensively [^5][^17][^3][^2][^10][^40][^49][^1][^7][^11][^22]. `为了从任意结构的图中提取特征，图神经网络(GNNs)得到了广泛的发展和探索。`Recently proposed GNNs can broadly be classified into spectral GNNs [^3][^11][^22][^13][^17] and spatial GNNs [^17][^49][^10][^51][^41][^1][^45]. `最近提出的GNN方案大致可分为频谱GNN和空域GNN。`Spectral GNNs convolve the input graph signals with a set of learned filters in the graph Fourier domain. `频谱GNN将输入的图形信号与图傅立叶域中的一组学习滤波器进行卷积。`They are however limited in terms of computational efficiency and generalizability to new graphs due to the requirement of eigendecomposition and the assumption of fixed adjacency. `但是，因为特征分解的要求和固定邻接的假设，它们受限于计算效率和新图的推广性`Spatial GNNs, in contrast, generally perform layer-wise update for each node by (1) selecting neighbors with a neighborhood function (e.g. adjacent nodes); (2) merging the features from the selected neighbors and itself with an aggregation function (e.g. mean pooling); and (3) applying an activated transformation to the merged features (e.g. MLP [^49]). `与之相反，空域GNN通常通过（1）选择具有邻域函数的邻居（例如，相邻节点）；（2）使用聚集函数将来自所选择的邻居及其自身的特征合并（例如，均值池）；以及（3）将激活的变换应用于合并的特征（例如，MLP），来执行针对每个节点的层级更新。`Among different GNN variants, the Graph Convolutional Network (GCN) [^17] was first introduced as a first-order approximation for localized spectral convolutions, but its simplicity as a mean neighborhood aggregator [^49][^46] has quickly led many subsequent spatial GNN architectures [^49][^1][^45][^7] and various applications involving graph structured data [^44][^47][^52][^50][^33][^34][^21] to treat it as a spatial GNN baseline. `在不同的GNN变体中，图卷积网络(GCN)最初是作为局部频谱卷积的一阶近似引入的，但它作为平均邻域聚合器的简单性迅速导致许多后续的空域GNN体系结构和涉及图结构数据的各种应用将其视为空域GNN基线。`This work adapts the layer-wise update rule in GCN. `本文采用了GCN中的分层更新规则。`
 
 **Multi-Scale Graph Convolutions.** `多尺度图卷积`Multi-scale spatial GNNs have also been proposed to capture features from non-local neighbors. `多尺度空域GNNs也被提出用于捕捉非局部邻域的特征。`[^1][^19][^21][^45][^24] use higher order polynomials of the graph adjacency matrix to aggregate features from long-range neighbor nodes. `这些工作使用图邻接矩阵的邻接矩阵高次幂来聚合来自远处邻居节点的特征`Truncated Block Krylov network [^29] similarly raises the adjacency matrix to higher powers and obtains multi-scale information through dense features concatenation from different hidden layers. `Truncated Block Krylov network同样将邻接矩阵提高到更高的幂次，并通过不同隐层的密集特征串联来获得多尺度信息。`LanczosNet [^24] deploys a low-rank approximation of the adjacency matrix to speed up the exponentiation on large graphs. `LanczosNet利用邻接矩阵的低秩近似来加速大型图的幂运算。`As mentioned in Section 1, we argue that adjacency powering can have adverse effects on long-range modeling due to weighting bias, and our proposed module aims to address this with disentangled multi-scale aggregators. `如第1节所述，我们认为邻接权重可能会因权重偏差而对长期建模产生不利影响，而我们提出的模块旨在通过解藕的多尺度聚合器解决这一问题。`
 
-### 2.2. Skeleton-Based Action Recognition
+### 2.2. Skeleton-Based Action Recognition `基于骨架的动作识别`
 
 ​    Earlier approaches [^42][^6][^31][^36][^43][^48][^54] to skeleton-based action recognition focus on hand-crafting features and joint relationships for downstream classifiers, which ignore the important semantic connectivity of the human body. `早期的基于骨架的动作识别方法侧重于下游分类器的手工制作特征和关节关系，忽略了人体重要的语义连接。`By constructing spatial-temporal graphs and modeling the spatial relationships with GNNs directly, recent approaches [^50][^19][^8][^21][^8][^33][^32][^34][^18] have seen significant performance boost, indicating the necessity of the semantic human skeleton for action predictions. `通过构造时空图和直接用GNNs建模空间关系，最近的方法的性能得到了显著提高，这表明人体骨架的语义对于动作预测的必要性。`
 
@@ -54,7 +54,7 @@ Another desirable characteristic of robust algorithms is the ability to leverage
 
 ## 3. MS-G3D
 
-### 3.1. Preliminaries
+### 3.1. Preliminaries 
 
 
 
@@ -68,7 +68,7 @@ Another desirable characteristic of robust algorithms is the ability to leverage
 
 ## 5. Conclusion
 
-​    In this work, we present two methods for improving skeleton-based action recognition: a disentangled multi-scale aggregation scheme for graph convolutions that removes redundant dependencies between different neighborhoods, and G3D, a unified spatial-temporal graph convolutional operator that directly models spatial-temporal dependencies from skeleton graph sequences. By coupling these methods, we derive MS-G3D, a powerful feature extractor that captures multi-scale spatial-temporal features previously overlooked by factorized modeling. With experiments on three large-scale datasets, we show that our modeloutperforms existing methods by a sizable margin.
+​    In this work, we present two methods for improving skeleton-based action recognition: a disentangled multi-scale aggregation scheme for graph convolutions that removes redundant dependencies between different neighborhoods, and G3D, a unified spatial-temporal graph convolutional operator that directly models spatial-temporal dependencies from skeleton graph sequences. `在这项工作中，我们提出了两种改进基于骨架的动作识别的方法：一种是去除不同邻域之间冗余依赖的解藕多尺度图卷积聚集方案；另一种是G3D，它是一种统一的时空图卷积算子，它直接从骨架图序列中建模时空依赖关系。`By coupling these methods, we derive MS-G3D, a powerful feature extractor that captures multi-scale spatial-temporal features previously overlooked by factorized modeling. `通过整合这些方法，我们得到了MS-G3D，这是一个功能强大的特征提取器，它捕获了以前被因式分解方法建模忽视的多尺度时空特征。`With experiments on three large-scale datasets, we show that our modeloutperforms existing methods by a sizable margin. `在三个大规模数据集上的实验表明，我们的模型相比现有的方法有相当大的优势。`
 
 **Acknowledgements:** This work was supported by the Australian Research Council Grant DP200103223. ZL thanks Weiqing Cao for designing figures.
 
