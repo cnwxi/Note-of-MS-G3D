@@ -12,7 +12,7 @@
 
 ## 1. Introduction
 
->![](https://github.com/cnwxi/Note-of-Skeleton-Based-Action-Recognition/blob/56d942df476cd37bf16103b64b098501bbf5122f/image/1.png)
+>![](https://github.com/cnwxi/Note-of-MS-G3D/blob/56d942df476cd37bf16103b64b098501bbf5122f/image/1.png)
 >
 >![](.\image\1.png)
 >
