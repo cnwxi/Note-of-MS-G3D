@@ -4,13 +4,17 @@
 
 
 
-## Abstract `摘要`
+[TOC]
+
+
+
+## Abstract
 
    Spatial-temporal graphs have been widely used by skeleton-based action recognition algorithms to model human action dynamics. `时空图被广泛应用于基于骨架的动作识别算法来对人类动作动态进行建模。`To capture robust movement patterns from these graphs, long-range and multi-scale context aggregation and spatial-temporal dependency modeling are critical aspects of a powerful feature extractor. `为了从这些图片中获取稳健的运动模式，长期和多尺度的上下文聚合和时空依赖建模是一个强大的特征提取器的重要方面。`However, existing methods have limitations in achieving (1) unbiased long-range joint relationship modeling under multi-scale operators and (2) unobstructed cross-spacetime information flow for capturing complex spatial-temporal dependencies. `但是，现有方法在实现 (1) 在多尺度算子下的无偏差长期关节关系建模和 (2) 为捕捉复杂时空依赖的流畅的跨时空信息流等方面存在局限。`In this work, we present (1) a simple method to disentangle multi-scale graph convolutions and (2) a unified spatial-temporal graph convolutional operator named G3D. `在这项工作中，我们提出了 (1) 一个用于分解多尺度图卷积的简单方法和 (2) 一种统一的时空图卷积算子，G3D。`The proposed multi-scale aggregation scheme disentangles the importance of nodes in different neighborhoods for effective long-range modeling. `所提到的多尺度聚合方法解决了在不同邻域中节点对于长期建模的重要性。`The proposed G3D module leverages dense cross-spacetime edges as skip connections for direct information propagation across the spatial-temporal graph. `所提到的G3D模型利用稠密的跨时空边界作为跳跃连接，用于时空图之间直接的信息传播。`By coupling these proposals, we develop a powerful feature extractor named MS-G3D based on which our model outperforms previous state-of-the-art methods on three large-scale datasets: NTU RGB+D 60, NTU RGB+D 120, and Kinetics Skeleton 400. `综上所述，我们开发了一个强大的特征提取器MS-G3D。基于它，我们在3个大规模数据集NTU RGB+D 60、NTU RGB+D 120和Kinetics Skeleton 400上的性能优于之前最先进的方法。`
 
 
 
-## 1. Introduction `引言`
+## 1. Introduction
 
 >![](https://github.com/cnwxi/Note-of-Skeleton-Based-Action-Recognition/blob/56d942df476cd37bf16103b64b098501bbf5122f/image/1.png)
 >
@@ -20,7 +24,7 @@
 
 
 
-​    Human action recognition is an important task with many real-world applications. `人类动作识别是许多现实应用中的一项重要任务。`In particular, skeleton-based human action recognition involves predicting actions from skeleton representations of human bodies instead of raw RGB videos, and the significant results seen in recent work [^50][^33][^32][^34][^21][^20 ][^54][^35] have proven its merits. `特别地，基于骨架的人类动作识别涉及从人类身体的骨架表征预测动作，而非原始的RGB视频，并且最近的工作中发现的一些有意义的结果证明了它的优势。`In contrast to RGB representations, skeleton data contain only the 2D [^50][^15] or 3D [^31][^25] positions of the human key joints, providing highly abstract information that is also free of environmental noises (e.g. background clutter, lighting conditions, clothing), allowing action recognition algorithms to focus on the robust features of the action. `对比RGB表征，骨架数据只包含人体关键关节2D或3D位置，提供了高度抽象的信息并且没有环境噪声（如背景杂波、光照条件、衣服），使得动作识别算法可以专注于动作的稳健特征。`
+​    Human action recognition is an important task with many real-world applications. `人类动作识别是许多现实应用中的一项重要任务。`In particular, skeleton-based human action recognition involves predicting actions from skeleton representations of human bodies instead of raw RGB videos, and the significant results seen in recent work [^50][^33][^32][^34][^21][^20 ][^54][^35] have proven its merits. `特别地，基于骨架的人类动作识别涉及从人类身体的骨架表征预测动作，而非原始的RGB视频，并且最近的工作中发现的一些有意义的结果证明了它的优势。`In contrast to RGB representations, skeleton data contain only the 2D [^50][^15] or 3D [^31][^25] positions of the human key joints, providing highly abstract information that is also free of environmental noises ($e.g.$ background clutter, lighting conditions, clothing), allowing action recognition algorithms to focus on the robust features of the action. `对比RGB表征，骨架数据只包含人体关键关节2D或3D位置，提供了高度抽象的信息并且没有环境噪声（如背景杂波、光照条件、衣服），使得动作识别算法可以专注于动作的稳健特征。`
 
 ​    Earlier approaches to skeleton-based action recognition treat human joints as a set of independent features, and they model the spatial and temporal joint correlations through hand-crafted [^42][^43] or learned [^31][^6][^48][^54] aggregations of these features. `早期的基于骨架的动作识别方法将人体关节看作一组独立的特征，他们通过手动制造的或者学习的特征的集合来建模时间和空间上关节的相关性。`However, these methods overlook the inherent relationships between the human joints, which are best captured with human skeleton graphs with joints as nodes and their natural connectivity (i.e. “bones”) as edges. `然而，这些方法忽视了人体关节之间的内在关系，这种关系最好利用人体骨架图来捕捉，人体骨架图中的关节为节点，它们的自然连接（即“骨头”）为边。`For this reason, recent approaches [^50][^34][^35][^32] model the joint movement patterns of an action with a skeleton spatial-temporal graph, which is a series of disjoint and isomorphic skeleton graphs at different time steps carrying information in both spatial and temporal dimensions. `因此，最近的研究方法利用骨架时空图建立了动作的关节运动模式的模型，骨架时空图是一系列不相交、同构的不同时间步长的骨架图，携带空间和时间维度上的信息。`
 
@@ -36,15 +40,15 @@ Another desirable characteristic of robust algorithms is the ability to leverage
 
 (iii) Integrating the disentangled aggregation scheme with G3D gives a powerful feature extractor (MS-G3D) with multi-scale receptive fields across both spatial and temporal dimensions. `将解藕聚合方案与 G3D 相结合，提供了一个强大的特征提取器(MS-G3D) ，具有跨时空的多尺度感受野。 `The direct multi-scale aggregation of features in spacetime further boosts model performance. `时空特征的直接多尺度聚合进一步提高了模型性能。`
 
-## 2. Related Work `相关工作`
+## 2. Related Work
 
-### 2.1. Neural Nets on Graphs `图神经网络`
+### 2.1. Neural Nets on Graphs
 
-**Architectures**. `架构`To extract features from arbitrarily structured graphs, Graph Neural Networks (GNNs) have been developed and explored extensively [^5][^17][^3][^2][^10][^40][^49][^1][^7][^11][^22]. `为了从任意结构的图中提取特征，图神经网络(GNNs)得到了广泛的发展和探索。`Recently proposed GNNs can broadly be classified into spectral GNNs [^3][^11][^22][^13][^17] and spatial GNNs [^17][^49][^10][^51][^41][^1][^45]. `最近提出的GNN方案大致可分为频谱GNN和空域GNN。`Spectral GNNs convolve the input graph signals with a set of learned filters in the graph Fourier domain. `频谱GNN将输入的图形信号与图傅立叶域中的一组学习滤波器进行卷积。`They are however limited in terms of computational efficiency and generalizability to new graphs due to the requirement of eigendecomposition and the assumption of fixed adjacency. `但是，因为特征分解的要求和固定邻接的假设，它们受限于计算效率和新图的推广性`Spatial GNNs, in contrast, generally perform layer-wise update for each node by (1) selecting neighbors with a neighborhood function (e.g. adjacent nodes); (2) merging the features from the selected neighbors and itself with an aggregation function (e.g. mean pooling); and (3) applying an activated transformation to the merged features (e.g. MLP [^49]). `与之相反，空域GNN通常通过（1）选择具有邻域函数的邻居（例如，相邻节点）；（2）使用聚集函数将来自所选择的邻居及其自身的特征合并（例如，均值池）；以及（3）将激活的变换应用于合并的特征（例如，MLP），来执行针对每个节点的层级更新。`Among different GNN variants, the Graph Convolutional Network (GCN) [^17] was first introduced as a first-order approximation for localized spectral convolutions, but its simplicity as a mean neighborhood aggregator [^49][^46] has quickly led many subsequent spatial GNN architectures [^49][^1][^45][^7] and various applications involving graph structured data [^44][^47][^52][^50][^33][^34][^21] to treat it as a spatial GNN baseline. `在不同的GNN变体中，图卷积网络(GCN)最初是作为局部频谱卷积的一阶近似引入的，但它作为平均邻域聚合器的简单性迅速导致许多后续的空域GNN体系结构和涉及图结构数据的各种应用将其视为空域GNN基线。`This work adapts the layer-wise update rule in GCN. `本文采用了GCN中的分层更新规则。`
+**Architectures**. `架构`To extract features from arbitrarily structured graphs, Graph Neural Networks (GNNs) have been developed and explored extensively [^5][^17][^3][^2][^10][^40][^49][^1][^7][^11][^22]. `为了从任意结构的图中提取特征，图神经网络(GNNs)得到了广泛的发展和探索。`Recently proposed GNNs can broadly be classified into spectral GNNs [^3][^11][^22][^13][^17] and spatial GNNs [^17][^49][^10][^51][^41][^1][^45]. `最近提出的GNN方案大致可分为频谱GNN和空域GNN。`Spectral GNNs convolve the input graph signals with a set of learned filters in the graph Fourier domain. `频谱GNN将输入的图形信号与图傅立叶域中的一组学习滤波器进行卷积。`They are however limited in terms of computational efficiency and generalizability to new graphs due to the requirement of eigendecomposition and the assumption of fixed adjacency. `但是，因为特征分解的要求和固定邻接的假设，它们受限于计算效率和新图的推广性`Spatial GNNs, in contrast, generally perform layer-wise update for each node by (1) selecting neighbors with a neighborhood function ($e.g.$ adjacent nodes); (2) merging the features from the selected neighbors and itself with an aggregation function ($e.g.$ mean pooling); and (3) applying an activated transformation to the merged features ($e.g.$ MLP [^49]). `与之相反，空域GNN通常通过（1）选择具有邻域函数的邻居（例如，相邻节点）；（2）使用聚集函数将来自所选择的邻居及其自身的特征合并（例如，均值池）；以及（3）将激活的变换应用于合并的特征（例如，MLP），来执行针对每个节点的层级更新。`Among different GNN variants, the Graph Convolutional Network (GCN) [^17] was first introduced as a first-order approximation for localized spectral convolutions, but its simplicity as a mean neighborhood aggregator [^49][^46] has quickly led many subsequent spatial GNN architectures [^49][^1][^45][^7] and various applications involving graph structured data [^44][^47][^52][^50][^33][^34][^21] to treat it as a spatial GNN baseline. `在不同的GNN变体中，图卷积网络(GCN)最初是作为局部频谱卷积的一阶近似引入的，但它作为平均邻域聚合器的简单性迅速导致许多后续的空域GNN体系结构和涉及图结构数据的各种应用将其视为空域GNN基线。`This work adapts the layer-wise update rule in GCN. `本文采用了GCN中的分层更新规则。`
 
 **Multi-Scale Graph Convolutions.** `多尺度图卷积`Multi-scale spatial GNNs have also been proposed to capture features from non-local neighbors. `多尺度空域GNNs也被提出用于捕捉非局部邻域的特征。`[^1][^19][^21][^45][^24] use higher order polynomials of the graph adjacency matrix to aggregate features from long-range neighbor nodes. `这些工作使用图邻接矩阵的邻接矩阵高次幂来聚合来自远处邻居节点的特征`Truncated Block Krylov network [^29] similarly raises the adjacency matrix to higher powers and obtains multi-scale information through dense features concatenation from different hidden layers. `Truncated Block Krylov network同样将邻接矩阵提高到更高的幂次，并通过不同隐层的密集特征串联来获得多尺度信息。`LanczosNet [^24] deploys a low-rank approximation of the adjacency matrix to speed up the exponentiation on large graphs. `LanczosNet利用邻接矩阵的低秩近似来加速大型图的幂运算。`As mentioned in Section 1, we argue that adjacency powering can have adverse effects on long-range modeling due to weighting bias, and our proposed module aims to address this with disentangled multi-scale aggregators. `如第1节所述，我们认为邻接权重可能会因权重偏差而对长期建模产生不利影响，而我们提出的模块旨在通过解藕的多尺度聚合器解决这一问题。`
 
-### 2.2. Skeleton-Based Action Recognition `基于骨架的动作识别`
+### 2.2. Skeleton-Based Action Recognition 
 
 ​    Earlier approaches [^42][^6][^31][^36][^43][^48][^54] to skeleton-based action recognition focus on hand-crafting features and joint relationships for downstream classifiers, which ignore the important semantic connectivity of the human body. `早期的基于骨架的动作识别方法侧重于下游分类器的手工制作特征和关节关系，忽略了人体重要的语义连接。`By constructing spatial-temporal graphs and modeling the spatial relationships with GNNs directly, recent approaches [^50][^19][^8][^21][^8][^33][^32][^34][^18] have seen significant performance boost, indicating the necessity of the semantic human skeleton for action predictions. `通过构造时空图和直接用GNNs建模空间关系，最近的方法的性能得到了显著提高，这表明人体骨架的语义对于动作预测的必要性。`
 
@@ -55,12 +59,77 @@ Another desirable characteristic of robust algorithms is the ability to leverage
 ## 3. MS-G3D
 
 ### 3.1. Preliminaries 
+**Notations.** A human skeleton graph is denoted as $G = (V, E) $, where $V = \{v_1, ..., v_N\}$ is the set of $N$ nodes representing joints, and $E$ is the edge set representing bones captured by an adjacency matrix $A \in  R^{N\times N}$ where initially $A_{i,j }= 1$ if an edge directs from $v_i$ to $v_j$ and 0 otherwise. $A$ is symmetric since $G$ is undirected. Actions as graph sequences have a node features set $X = \{x_{t,n} \in  R^C \mid t,n \in Z,1 \leq t \leq T,1 \leq n \leq N\}$ represented as a feature tensor $X \in  R^{T\times N\times C}$, where $x_{t,n} = X_{t,n}$,: is the $C$ dimensional feature vector for node $v_n$ at time $t$ over a total of $T$ frames. The input action is thus adequately described by $A$ structurally and by $X$ feature-wise, with $X_t \in  R^{N\times C}$ being the node features at time $t$. $\Theta^{(l)} \in  R^{C_{l}\times C_{l+1}}$ denotes a learnable weight matrix at layer l of a network.
 
+**Graph Convolutional Nets (GCNs).** On skeleton inputs defined by features X and graph structure A, the layer-wise update rule of GCNs can be applied to features at time t as:
+$$
+X^{(l+1)}_{t}= \sigma \left(\widetilde{D}^{-\frac{1}{2}}\widetilde{A}\widetilde{D}^{-\frac{1}{2}}X^{(l)}_t \Theta ^{(l)} \right)\tag{1}
+$$
 
+where  $\widetilde{A} = A + I$ is the skeleton graph with added self-loops to keep identity features, $\widetilde{D}$ is the diagonal degree matrix of  $\widetilde{S}$, and $\sigma (·)$ is an activation function. The term $\widetilde{D}^{-\frac{1}{2}}\widetilde{A}\widetilde{D}^{-\frac{1}{2}}X^{(l)}_t$ can be intuitively interpreted as an approximate spatial mean feature aggregation from the direct neighborhood followed by an activated linear layer.
 
 ### 3.2. Disentangled Multi-Scale Aggregation
 
+**Biased Weighting Problem.** Under the spatial aggregation framework in Eq. 1, existing approaches [^21] employ higher-order polynomials of the adjacency matrix to aggregate multi-scale structural information at time $t$, as:
+$$
+X^{(l+1)}_t = \sigma \left( \sum_{k=0}^K\widehat{A}^kX^{(l)}_t \Theta^{(l)}_{(k)} \right) \tag{2}
+$$
+where $K$ controls the number of scales to aggregate. Here, $\widehat{A}$ is a normalized form of A, $e.g.$ [^19] uses the symmetric normalized graph Laplacian$\widehat{A} = L^{norm} = I−D^{−\frac{1}{2}}AD^{−\frac{1}{2}} $; [^21] uses the random-walk normalized adjacency $\widehat{A} = D^{−1} A$; more generally, one can use $\widehat{A}=  \widetilde{D}^{-\frac{1}{2}} \widetilde{A} \widetilde{D}^{-\frac{1}{2}} $from GCNs. It is easy to see that $A^k_{i,j} = A^k_{j,i}$ gives the number of length $k$ walks between $v_i$ and $v_j,$ and thus the term $\widehat{A}^kX^{(l)}_t$ is performing a weighted feature average based on the number of such walks. However, it is clear that there are drastically more possible length $k$ walks to closer nodes than to the actual $k$-hop neighbors due to cyclic walks. This causes a bias towards the local region as well as nodes with higher degrees. The node self-loops in GCNs allow even more possible cycles (as walks can always cycle on self-loops) and thus amplify the bias. See Fig. 2 for illustration. Under multi-scale aggregation on skeleton graphs, the aggregated features will thus be dominated by signals from local body parts, making it ineffective to capture long-range joint dependencies with higher polynomial orders.
+
+**Disentangling Neighborhoods.** To address the above problem, we first define the k-adjacency matrix  $\widetilde{A}_{(k)} $ as
+$$
+[\widetilde{A}_{(k)}]_{i,j}= 
+\begin{cases} 
+1 & \text {if $d(v_i,v_j)=k$,} \\
+1 & \text {if $i=j$,} \\
+0 & \text {otherwise,}
+\end{cases} \tag{3}
+$$
+where $d(v_i,v_j)$ gives the shortest distance in number of hops between$ v_i$ and$ v_j$.  $\widetilde{A}{(k)}$ is thus a generalization of $\widetilde{A}$ to further neighborhoods, with $\widetilde{A}_{(1)} = \widetilde{A}$ and $\widetilde{A}_{(0)} = I$. Under spatial aggregation in Eq. 1, the inclusion of self-loops in $\widetilde{A}_{(k)}$ is critical for learning the relationships between the current joint and its $k$-hop neighbors, as well as for keeping each joint’s identity information when no $k$-hop neighbors are available. Given that $N$ is small, $\widetilde{A}_{(k)}$ can be easily computed, $e.g.$, using differences of graph powers as $ \widetilde{A}_{(k)} = I + 1( \widetilde{A}^{k}≥1 ) −1 ( \widetilde{A}^{k-1} ≥1 )$. Substituting $\widehat{A}_{(k)}$ with $\widetilde{A}_{(k)}$ in Eq. 2, we arrive at:
+$$
+X^{(l+1)}_t=\sigma \left(\sum_{k=0}^K\widetilde{D}^{-\frac{1}{2}}_{(k)}\widetilde{A}_{(k)}\widetilde{D}^{-\frac{1}{2}}_{(k)}X^{(l)}_t\Theta^{(l)}
+_{(k)} \right)\tag{4}
+$$
+where $\widetilde{D}^{-\frac{1}{2}}_{(k)}\widetilde{A}_{(k)}\widetilde{D}^{-\frac{1}{2}}_{(k)}$ is the normalized [^17] $k$-adjacency.
+
+Unlike the previous case where possible length $k$ walks are predominantly conditioned on length $k − 1$ walks, the proposed disentangled formulation in Eq. 4 addresses the biased weighting problem by removing redundant dependencies of distant neighborhoods’ weighting on closer neighborhoods. Additional scales with larger $k$ are therefore aggregated in an additive manner under a multi-scale operator, making long-range modeling with large values of $k$ to remain effective. The resulting $k$-adjacency matrices are also more sparse than their exponentiated counterparts (see Fig. 2), allowing more efficient representations.
+
 ### 3.3. G3D: Unified Spatial-Temporal Modeling
+
+Most existing work treats skeleton actions as a sequence of disjoint graphs where features are extracted through spatial-only ($e.g.$ GCNs) and temporal-only ($e.g.$ TCNs) modules. We argue that such factorized formulation is less effective for capturing complex spatial-temporal joint relationships. Clearly, if a strong connection exists between a pair of nodes, then during layer-wise propagation the pair should incorporate a significant portion each other’s features to reflect such a connection [^50][^33][^34]. However, as signals are propagated across spacetime through a series of local aggregators (GCNs and TCNs alike), they are weakened as redundant information is aggregated from an increasingly larger spatial-temporal receptive field. The problem is more evident if one observes that GCNs do not perform a weighted aggregation to distinguish each neighbor.
+
+**Cross-Spacetime Skip Connections.** To tackle the above problem, we propose a more reasonable approach to allow cross-spacetime skip connections, which are readily moeled with cross-spacetime edges in a spatial-temporal graph. Let us first consider a sliding temporal window of size $\tau$ over the input graph sequence, which, at each step, obtains a spatial-temporal subgraph $G_{(\tau)} = (V_{(\tau)},E_{(\tau)})$ where $V_{(\tau)} = V_1 \, ∪\,...\,∪\,V_\tau$ is the union of all node sets across $\tau$ frames in the window. The initial edge set $E_{(\tau)}$ is defined by tiling $\widetilde{A}$ into a block adjacency matrix $\widetilde{A}_{(\tau)}$, where
+$$
+\widetilde{A}_{(\tau)}= 
+\left[
+\begin{matrix}
+\widetilde{A} & \cdots & \widetilde{A}\\
+\vdots &\ddots & \vdots\\
+\widetilde{A} & \cdots & \widetilde{A}\\ 
+\end{matrix}
+\right] \in R^{\tau N \times \tau N}
+\tag{5}
+$$
+Intuitively, each submatrix $[\widetilde{A}_{(τ)}]-{i,j} = \widetilde{A}$ means every node in $V_i$ is connected to itself and its 1-hop spatial neighbors at frame j by extrapolating the frame-wise spatial connectivity (which is $[\widetilde{A}_{(τ)}]_{i,i}$ for all $i$) to the temporal domain. Thus, each node within $G_{(\tau)}$ is densely connected to itself and its 1-hop spatial neighbors across all $\tau$ frames. We can easily obtain $X_{(\tau)} \in R^{T \times \tau N \times C}$ using the same sliding window over $X$ with zero padding to construct $T$ windows. Using Eq. 1, we thus arrive at a unified spatial-temporal graph convolutional operator for the $t^{th}$ temporal window:
+$$
+\left[X^{(l+1)}_{(\tau)}\right]= \sigma \left( \widetilde{D}^{-\frac{1}{2}}_{\tau} \widetilde{A}_{(\tau)} \widetilde{D}^{-\frac{1}{2}}_{\tau} \left[ X^{(l)}_{(\tau)} \right]_t \Theta^{(l)} \right). \tag{6}
+$$
+**Dilated Windows.** Another significant aspect of the above window construction is that the frames need not to be adjacent. A dilated window with τ frames and a dilation rate d can be constructed by picking a frame every d frames, and reusing the same spatial-temporal structure $\widetilde{A}_{(\tau)}$. Similarly, we can obtain node features $X_{(\tau,d)} \in R^{T\times\tau N×C} \; (d = 1\; if \;omitted)$ and perform layer-wise update as in Eq. 6. Dilated windows allow larger temporal receptive fields without growing the size of $\widetilde{A}_{(\tau)}$, analogous to how dilated convolutions [^53] keep constant complexities.
+
+**Multi-Scale G3D.** We can also integrate the proposed disentangled multi-scale aggregation scheme (Eq. 4) into G3D for multi-scale reasoning directly in the spatial-temporal do-
+main. We thus derive the MS-G3D module from Eq. 6 as:
+$$
+\left[ X^{(l+1)}_{(\tau)} \right]_t = \sigma 
+\left( 
+\sum_{k=0}^K \widetilde{D}^{-\frac{1}{2}}_{(\tau,k)} 					\widetilde{A}_{(\tau,k)}\widetilde{D}^{-\frac{1}{2}}_{(\tau,k)}
+	\left[
+    	X^{(l)}_{(\tau)}
+	\right]_t\Theta^{(l)}_{(k)}
+\right), \tag{7}
+$$
+where  $\widetilde{A}_{(\tau,k)}$ and $\widetilde{D}_{(\tau,k)}$ are defined similarly as $\widetilde{A}_{(k)}$ and $\widetilde{D}_{(k)}$ respectively. Remarkably, our proposed disentangled aggregation scheme complements this unified operator, as G3D’s increased node degrees from spatial-temporal connectivity can contribute to the biased weighting problem.
+
+**Discussion.** We give more in-depth analyses on G3D as follows. (1) It is analogous to classical 3D convolutional blocks [^38], with its spatial-temporal receptive field defined by $\tau$, $d$, and $\widetilde{A}$. (2) Unlike 3D convolutions, G3D’s parameter count from $\Theta^{(·)}_{(·)}$ is independent of $\tau$ or $\mid E(\tau)\mid$, making it generally less prone to overfitting with large $\tau$. (3) The dense cross-spacetime connections in G3D entail a tradeoff on $\tau$, as larger values of $\tau$ bring larger temporal receptive fields at the cost of more generic features due to larger immediate neighborhoods. Additionally, larger $\tau$ implies a quadratically larger $\widetilde{A}_{(\tau)}$ and thus more operations with multi-scale aggregation. On the other hand, larger dilations $d$ bring larger temporal coverage at the cost of temporal resolution (lower frame rates). $\tau$ and $d$ thus must be balanced carefully. (4) G3D modules are designed to capture com- plex regional spatial-temporal instead of long-range dependencies that are otherwise more economically captured by factorized modules. We thus observe the best performance when G3D modules are augmented with long-range, factorized modules, which we discuss in the next section.
 
 ### 3.4. Model Architecture
 
