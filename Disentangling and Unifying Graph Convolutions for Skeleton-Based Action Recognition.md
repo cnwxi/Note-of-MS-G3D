@@ -57,7 +57,7 @@ Another desirable characteristic of robust algorithms is the ability to leverage
 ​    Another relevant work is GR-GCN [^8], which merges every three frames over the skeleton graph sequence and adds sparsified edges between adjacent frames. `另一个相关的工作是GR-GCN，它在骨架图序列上每三帧合并一次，并在相邻帧之间添加稀疏边。` Whereas GR-GCN also deploys cross-spacetime edges, our G3D module has several important distinctions: `虽然GR-GCN也应用了跨时空边，但跟我们的G3D模块有几个重要区别：`(1) Cross-spacetime edges in G3D follow the semantic human skeleton, which is naturally a more interpretable and more robust representation than the sparsified, one-size-fits-all graph in GR-GCN. The underlying graph is also much easier to compute. `（1）G3D中的跨时空边遵循语义人体骨架，与GR-GCN中稀疏的、一刀切的图相比，G3D中的跨时空边自然是一种更可解释、更健壮的表示。底层图形也更容易计算。` (2) GR-GCN has cross-spacetime edges only between adjacent frames, which prevents it to reason beyond a limited temporal context of three frames. `（2）GR-GCN仅在相邻帧之间具有跨时空边，这使其无法推理超出三个帧的有限时间范围。` (3) G3D can learn from multiple temporal contexts simultaneously leveraging different window sizes and dilations, which is not addressed in GR-GCN. `（3）G3D可以同时利用不同的窗口大小和膨胀从多个时间上下文中学习，这在GR-GCN中没有解决。` 
 
 ## 3. MS-G3D
-> ![](https://github.com/cnwxi/Note-of-MS-G3D/blob/56d942df476cd37bf16103b64b098501bbf5122f/image/1.png)
+> ![](https://github.com/cnwxi/Note-of-MS-G3D/blob/56d942df476cd37bf16103b64b098501bbf5122f/image/2.png)
 >
 > ![](./image/2.png)
 >
