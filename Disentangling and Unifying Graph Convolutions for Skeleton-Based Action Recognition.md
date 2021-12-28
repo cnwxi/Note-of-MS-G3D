@@ -9,14 +9,10 @@
 
 
 ## 1. Introduction
->
+
 >![](https://github.com/cnwxi/Note-of-MS-G3D/blob/e1c1be5d082d204a0074ce1d08aa8cdbbd6a49a0/image/Figure1.png)
 >
->![](.\image\Figure1.png)
->
 >Figure 1: (a) Factorized spatial and temporal modeling on skeleton graph sequences causes indirect information flow. `(a) 分离的骨架图序列时间和空间建模导致间接的信息流。` (b) In this work, we propose to capture cross-spacetime correlations with unified spatial-temporal graph convolutions. `(b) 在这项工作中，我们提出使用统一的时空图卷积来捕获跨时空的相关性。` (c) Disentangling node features at separate spatial-temporal neighborhoods (yellow, blue, red at different distances, partially colored for clarity) is pivotal for effective multi-scale learning in the spatial-temporal domain. `(c) 在不同的时空邻域中分离节点特征（不同距离的黄、蓝、红，部分上色用于区分）对于时空域中的有效的多尺度学习而言十分关键。` 
-
-
 
 ​    Human action recognition is an important task with many real-world applications. `人类动作识别是许多现实应用中的一项重要任务。` In particular, skeleton-based human action recognition involves predicting actions from skeleton representations of human bodies instead of raw RGB videos, and the significant results seen in recent work [^50][^33][^32][^34][^21][^20 ][^54][^35] have proven its merits. `特别地，基于骨架的人类动作识别涉及从人类身体的骨架表征预测动作，而非原始的RGB视频，并且最近的工作中发现的一些有意义的结果证明了它的优势。` In contrast to RGB representations, skeleton data contain only the 2D [^50][^15] or 3D [^31][^25] positions of the human key joints, providing highly abstract information that is also free of environmental noises ($e.g.$ background clutter, lighting conditions, clothing), allowing action recognition algorithms to focus on the robust features of the action. `对比RGB表征，骨架数据只包含人体关键关节2D或3D位置，提供了高度抽象的信息并且没有环境噪声（如背景杂波、光照条件、衣服），使得动作识别算法可以专注于动作的稳健特征。` 
 
@@ -53,8 +49,6 @@ Another desirable characteristic of robust algorithms is the ability to leverage
 ## 3. MS-G3D
 
 > ![](https://github.com/cnwxi/Note-of-MS-G3D/blob/e1c1be5d082d204a0074ce1d08aa8cdbbd6a49a0/image/Figure2.png)
->
-> ![](./image/Figure2.png)
 >
 > Figure 2: Illustration of the biased weighting problem and the proposed disentangled aggregation scheme. `图二：偏差问题和所提出得解耦聚合方案的图解。` Darker color indicates higher weighting to the central node (red). `颜色越深表示对于中心节点的权重越大（红色）。` Top left: closer nodes receive higher weighting from adjacency powering, which makes long-range modeling less effective, especially when multiple scales are aggregated. `左上角：越近的节点从邻接矩阵获得更高的权重，这会降低长期建模的效率，特别是在聚合多个尺度时。` Bottom left: our proposed disentangled aggregation models joint relationships at each neighborhood while keeping identity features. `左下：我们提出的解缠结聚合模型在保持自身特征的同时，对每个邻域的关节关系进行建模。` Right: Visualizing the corresponding adjacency matrices. Node self-loops are omitted for visual clarity. `右：可视化相应的邻接矩阵。 为了视觉清晰，省略了节点自环。`
 ### 3.1. Preliminaries 
@@ -134,8 +128,6 @@ where  $\widetilde{\mathbf{A}}_{(\tau,k)}$ and $\widetilde{\mathbf{D}}_{(\tau,k)
 
 > ![](https://github.com/cnwxi/Note-of-MS-G3D/blob/e1c1be5d082d204a0074ce1d08aa8cdbbd6a49a0/image/Figure3.png)
 >
-> ![](./image/Figure3.png)
->
 > Figure 3: (Match components with colors) **Architecture Overview**. “TCN”, “GCN”, prefix “MS-”, and suffix “-D” denotes temporal and graph convolutional blocks, and multi-scale and disentangled aggregation, respectively (Section 3.2). `架构概述：“TCN”、“GCN”、前缀“MS-”和后缀“-D”分别表示时间卷积块和图卷积块，以及多尺度和解缠聚集(第3.2节)。` Each of the $r$ STGC blocks (b) deploys a multi-pathway design to capture long-range and regional spatial-temporal dependencies simultaneously. `r个STGC块(b)中的每一个都使用了多分支设计，以同时捕获长期的和区域时空依赖关系。` **Dotted modules**, including extra G3D pathway, 1×1 conv, and strided temporal convolutions, are situational for model performance/complexity trade-off. `虚线模块：包括额外的G3D分支、1×1卷积层和跨步时间卷积，根据情况权衡模型的性能/复杂性。`
 
 **Overall Architecture.** `整体架构。` The final model architecture is illustrated in Fig. 3. `最终的模型架构如图3所示。` On a high level, it contains a stack of $r$ spatial-temporal graph convolutional (STGC) blocks to extract features from skeleton sequences, followed by a global average pooling layer and a softmax classifier. `在高层次上，它包含r个时空图卷积(STGC)块的堆栈，用于从骨架序列中提取特征，随后是全局均值池化层和Softmax分类器。` Each STGC block deploys two types of pathways to simultaneously capture complex regional spatial-temporal joint correlations as well as long-range spatial and temporal dependencies: `每个STGC块部署两种类型的路径，以同时捕获复杂的区域时空关节相关性以及长期的时空依赖性：` (1) The G3D pathway first constructs spatial-temporal windows, performs disentangled multi-scale graph convolutions on them, and then collapses them with a fully connected layer for window feature readout. `（1） G3D路径首先构造时空窗口，对其进行解纠缠的多尺度图卷积，然后用一个全连接层对其进行折叠将窗口特征读出。` The extra dotted G3D pathway (Fig. 3(b)) indicates the model can learn from multiple spatial-temporal contexts concurrently with different $τ$ and $d$; `额外的虚线G3D分支（图3(B)表明该模型可以同时从不同的τ和d的多个时空上下文中学习；` (2) The factorized pathway augments the G3D pathway with long-range, spatial-only, and temporal-only modules: the first layer is a multi-scale graph convolutional layer capable of modeling the entire skeleton graph with the maximum $K$; it is then followed by two multi-scale temporal convolutions layers to capture extended temporal contexts (discussed below). `（2） 因式分解路径通过长期、仅空间和仅时间的模块增强了G3D分支：第一层是一个多尺度的图卷积层，能够用最大K（最长关节间距离）对整个骨架图进行建模；随后是两个多尺度时间卷积层，以捕获扩展的时间上下文(下面讨论)。` The outputs from all pathways are aggregated as the STGC block output, which has 96, 192, and 384 feature channels respectively within a typical r=3 block architecture. `来自所有分支的输出被聚集为STGC块输出，该STGC块输出在典型的r=3块体系结构中分别具有96、192和384个特征通道。` Batch normalization [^14] and ReLU is added at the end of each layer except for the last layer. `批归一化和ReLU添加到除了最后一层以外的每一层末尾。` All STGC blocks, except the first, downsample the temporal dimension with stride 2 temporal conv and sliding windows. `除第一个块外，所有STGC块均使用步幅为2的时间卷积和滑动窗口在时间维度上进行下采样。`
@@ -168,19 +160,13 @@ Unless otherwise stated, all models have r = 3 and are trained with SGD with mom
 
 > ![](https://github.com/cnwxi/Note-of-MS-G3D/blob/e1c1be5d082d204a0074ce1d08aa8cdbbd6a49a0/image/Table1.png)
 >
-> ![](.\image\Table1.png)
->
 > Table 1: Accuracy (%) with multi-scale aggregation on individual pathways of STGC blocks with different K. “Mask” refers to the residual masks $\mathbf{A}^{\text{res}}$ . If $K>1$, GCN/G3D is Multi-Scale (MS-). `表1：具有不同K的STGC块的单个路径上的多尺度聚集的准确性(%)。 “掩码”是指残缺掩码Ares。 如果K>1，则GCN/G3D为多尺度(MS-)。`
 >
 > ![](https://github.com/cnwxi/Note-of-MS-G3D/blob/e1c1be5d082d204a0074ce1d08aa8cdbbd6a49a0/image/Table2.png)
 >
-> ![](./image/Table2.png)
->
 > Table 2: Model accuracy with various settings. MS-GCN and MS-G3D uses $K\in\{12，5\}$ respectively. $^†$Output channels double at the collapse window layer (Fig. 3(d), $C_{mid}$ to $C_{out}$ ) instead of at the graph convolution ($C_{in}$ to $C_{mid}$) to maintain similar budget. `表2：各种设置下的模型精度。 MS-GCN和MS-G3D分别使用K∈{12，5}。†输出通道在折叠窗口层（图3(D)，Cmid到Cout）加倍，而不是在图形卷积（Cin到Cmid），以维持相似的预算。`
 >
 > ![](https://github.com/cnwxi/Note-of-MS-G3D/blob/e1c1be5d082d204a0074ce1d08aa8cdbbd6a49a0/image/Table3.png)
->
-> ![](./image/Table3.png)
 >
 > Table 3: Comparing graph connectivity settings ($\tau=3$，$d=2$) . `表3：比较图连接性设置(τ=3，d=2)。`
 
@@ -200,19 +186,13 @@ We analyze the individual components and their configurations in the final archi
 
 > ![](https://github.com/cnwxi/Note-of-MS-G3D/blob/e1c1be5d082d204a0074ce1d08aa8cdbbd6a49a0/image/Table4.png)
 >
-> ![](./image/Table4.png)
->
 > Table 4: Classification accuracy comparison against state-of-the-art methods on the NTU RGB+D 120 Skeleton dataset. `表4：在NTU RGB+D 120骨骼数据集上的分类精度与最新方法的比较。`
 >
 > ![](https://github.com/cnwxi/Note-of-MS-G3D/blob/e1c1be5d082d204a0074ce1d08aa8cdbbd6a49a0/image/Table5.png)
 >
-> ![](./image/Table5.png)
->
 > Table 5: Classification accuracy comparison against state-of-the-art methods on the NTU RGB+D 60 Skeleton dataset. `表5：NTU RGB+D60骨架数据集分类精度与最新方法的比较。`
 >
 > ![](https://github.com/cnwxi/Note-of-MS-G3D/blob/e1c1be5d082d204a0074ce1d08aa8cdbbd6a49a0/image/Table6.png)
->
-> ![](./image/Table6.png)
 >
 > Table 6: Classification accuracy comparison against state-of-the-art methods on the Kinetics Skeleton 400 dataset. `表6：Kinetics Skeleton 400数据集上的分类精度与最新方法的比较。`
 
