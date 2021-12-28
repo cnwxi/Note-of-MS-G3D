@@ -10,7 +10,7 @@
 
 ## 1. Introduction
 
->![](https://github.com/cnwxi/Note-of-MS-G3D/tree/main/image/Figure1.png)
+>![](https://github.com/cnwxi/Note-of-MS-G3D/blob/e1c1be5d082d204a0074ce1d08aa8cdbbd6a49a0/image/Figure1.png)
 >
 >![](.\image\Figure1.png)
 >
@@ -51,7 +51,7 @@ Another desirable characteristic of robust algorithms is the ability to leverage
 ​    Another relevant work is GR-GCN [^8], which merges every three frames over the skeleton graph sequence and adds sparsified edges between adjacent frames. `另一个相关的工作是GR-GCN，它在骨架图序列上每三帧合并一次，并在相邻帧之间添加稀疏边。` Whereas GR-GCN also deploys cross-spacetime edges, our G3D module has several important distinctions: `虽然GR-GCN也应用了跨时空边，但跟我们的G3D模块有几个重要区别：`(1) Cross-spacetime edges in G3D follow the semantic human skeleton, which is naturally a more interpretable and more robust representation than the sparsified, one-size-fits-all graph in GR-GCN. The underlying graph is also much easier to compute. `（1）G3D中的跨时空边遵循语义人体骨架，与GR-GCN中稀疏的、一刀切的图相比，G3D中的跨时空边自然是一种更可解释、更健壮的表示。底层图形也更容易计算。` (2) GR-GCN has cross-spacetime edges only between adjacent frames, which prevents it to reason beyond a limited temporal context of three frames. `（2）GR-GCN仅在相邻帧之间具有跨时空边，这使其无法推理超出三个帧的有限时间范围。` (3) G3D can learn from multiple temporal contexts simultaneously leveraging different window sizes and dilations, which is not addressed in GR-GCN. `（3）G3D可以同时利用不同的窗口大小和膨胀从多个时间上下文中学习，这在GR-GCN中没有解决。` 
 
 ## 3. MS-G3D
-> ![](https://github.com/cnwxi/Note-of-MS-G3D/tree/main/image/Figure2.png)
+> ![](https://github.com/cnwxi/Note-of-MS-G3D/blob/e1c1be5d082d204a0074ce1d08aa8cdbbd6a49a0/image/Figure2.png)
 >
 > ![](./image/Figure2.png)
 >
@@ -131,7 +131,7 @@ where  $\widetilde{\mathbf{A}}_{(\tau,k)}$ and $\widetilde{\mathbf{D}}_{(\tau,k)
 
 ### 3.4. Model Architecture
 
-> ![](https://github.com/cnwxi/Note-of-MS-G3D/tree/main/image/Figure3.png)
+> ![](https://github.com/cnwxi/Note-of-MS-G3D/blob/e1c1be5d082d204a0074ce1d08aa8cdbbd6a49a0/image/Figure3.png)
 >
 > ![](./image/Figure3.png)
 >
@@ -165,19 +165,19 @@ Unless otherwise stated, all models have r = 3 and are trained with SGD with mom
 
 ### 4.3. Component Studies
 
-> ![](https://github.com/cnwxi/Note-of-MS-G3D/tree/main/image/Table1.png)
+> ![](https://github.com/cnwxi/Note-of-MS-G3D/blob/e1c1be5d082d204a0074ce1d08aa8cdbbd6a49a0/image/Table1.png)
 >
 > ![](.\image\Table1.png)
 >
 > Table 1: Accuracy (%) with multi-scale aggregation on individual pathways of STGC blocks with different K. “Mask” refers to the residual masks $\mathbf{A}^{\text{res}}$ . If $K>1$, GCN/G3D is Multi-Scale (MS-). `表1：具有不同K的STGC块的单个路径上的多尺度聚集的准确性(%)。 “掩码”是指残缺掩码Ares。 如果K>1，则GCN/G3D为多尺度(MS-)。`
 >
-> ![](https://github.com/cnwxi/Note-of-MS-G3D/tree/main/image/Table2.png)
+> ![](https://github.com/cnwxi/Note-of-MS-G3D/blob/e1c1be5d082d204a0074ce1d08aa8cdbbd6a49a0/image/Table2.png)
 >
 > ![](./image/Table2.png)
 >
 > Table 2: Model accuracy with various settings. MS-GCN and MS-G3D uses $K\in\{12，5\}$ respectively. $^†$Output channels double at the collapse window layer (Fig. 3(d), $C_{mid}$ to $C_{out}$ ) instead of at the graph convolution ($C_{in}$ to $C_{mid}$) to maintain similar budget. `表2：各种设置下的模型精度。 MS-GCN和MS-G3D分别使用K∈{12，5}。†输出通道在折叠窗口层（图3(D)，Cmid到Cout）加倍，而不是在图形卷积（Cin到Cmid），以维持相似的预算。`
 >
-> ![](https://github.com/cnwxi/Note-of-MS-G3D/tree/main/image/Table3.png)
+> ![](https://github.com/cnwxi/Note-of-MS-G3D/blob/e1c1be5d082d204a0074ce1d08aa8cdbbd6a49a0/image/Table3.png)
 >
 > ![](./image/Table3.png)
 >
@@ -197,19 +197,19 @@ We analyze the individual components and their configurations in the final archi
 
 ### 4.4. Comparison against the State-of-the-Art
 
-> ![](https://github.com/cnwxi/Note-of-MS-G3D/tree/main/image/Table4.png)
+> ![](https://github.com/cnwxi/Note-of-MS-G3D/blob/e1c1be5d082d204a0074ce1d08aa8cdbbd6a49a0/image/Table4.png)
 >
 > ![](./image/Table4.png)
 >
 > Table 4: Classification accuracy comparison against state-of-the-art methods on the NTU RGB+D 120 Skeleton dataset. `表4：在NTU RGB+D 120骨骼数据集上的分类精度与最新方法的比较。`
 >
-> ![](https://github.com/cnwxi/Note-of-MS-G3D/tree/main/image/Table5.png)
+> ![](https://github.com/cnwxi/Note-of-MS-G3D/blob/e1c1be5d082d204a0074ce1d08aa8cdbbd6a49a0/image/Table5.png)
 >
 > ![](./image/Table5.png)
 >
 > Table 5: Classification accuracy comparison against state-of-the-art methods on the NTU RGB+D 60 Skeleton dataset. `表5：NTU RGB+D60骨架数据集分类精度与最新方法的比较。`
 >
-> ![](https://github.com/cnwxi/Note-of-MS-G3D/tree/main/image/Table6.png)
+> ![](https://github.com/cnwxi/Note-of-MS-G3D/blob/e1c1be5d082d204a0074ce1d08aa8cdbbd6a49a0/image/Table6.png)
 >
 > ![](./image/Table6.png)
 >
