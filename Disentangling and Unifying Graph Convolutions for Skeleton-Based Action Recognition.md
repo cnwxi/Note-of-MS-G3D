@@ -2,12 +2,6 @@
 
 # `基于骨架的动作识别的图卷积解耦和统一`
 
-
-
-[TOC]
-
-
-
 ## Abstract
 
    Spatial-temporal graphs have been widely used by skeleton-based action recognition algorithms to model human action dynamics. `时空图被广泛应用于基于骨架的动作识别算法来对人类动作动态进行建模。` To capture robust movement patterns from these graphs, long-range and multi-scale context aggregation and spatial-temporal dependency modeling are critical aspects of a powerful feature extractor. `为了从这些图片中获取稳健的运动模式，长期和多尺度的上下文聚合和时空依赖建模是一个强大的特征提取器的重要方面。` However, existing methods have limitations in achieving (1) unbiased long-range joint relationship modeling under multi-scale operators and (2) unobstructed cross-spacetime information flow for capturing complex spatial-temporal dependencies. `但是，现有方法在实现 (1) 在多尺度算子下的无偏差长期关节关系建模和 (2) 为捕捉复杂时空依赖的流畅的跨时空信息流等方面存在局限。` In this work, we present (1) a simple method to disentangle multi-scale graph convolutions and (2) a unified spatial-temporal graph convolutional operator named G3D. `在这项工作中，我们提出了 (1) 一个用于分解多尺度图卷积的简单方法和 (2) 一种统一的时空图卷积算子，G3D。` The proposed multi-scale aggregation scheme disentangles the importance of nodes in different neighborhoods for effective long-range modeling. `所提到的多尺度聚合方法解决了在不同邻域中节点对于长期建模的重要性。` The proposed G3D module leverages dense cross-spacetime edges as skip connections for direct information propagation across the spatial-temporal graph. `所提到的G3D模型利用稠密的跨时空边界作为跳跃连接，用于时空图之间直接的信息传播。` By coupling these proposals, we develop a powerful feature extractor named MS-G3D based on which our model outperforms previous state-of-the-art methods on three large-scale datasets: NTU RGB+D 60, NTU RGB+D 120, and Kinetics Skeleton 400. `综上所述，我们开发了一个强大的特征提取器MS-G3D。基于它，我们在3个大规模数据集NTU RGB+D 60、NTU RGB+D 120和Kinetics Skeleton 400上的性能优于之前最先进的方法。` 
@@ -16,9 +10,9 @@
 
 ## 1. Introduction
 
->![](https://github.com/cnwxi/Note-of-MS-G3D/tree/main/image/1.png)
+>![](https://github.com/cnwxi/Note-of-MS-G3D/tree/main/image/Figure1.png)
 >
->![](.\image\1.png)
+>![](.\image\Figure1.png)
 >
 >Figure 1: (a) Factorized spatial and temporal modeling on skeleton graph sequences causes indirect information flow. `(a) 分离的骨架图序列时间和空间建模导致间接的信息流。` (b) In this work, we propose to capture cross-spacetime correlations with unified spatial-temporal graph convolutions. `(b) 在这项工作中，我们提出使用统一的时空图卷积来捕获跨时空的相关性。` (c) Disentangling node features at separate spatial-temporal neighborhoods (yellow, blue, red at different distances, partially colored for clarity) is pivotal for effective multi-scale learning in the spatial-temporal domain. `(c) 在不同的时空邻域中分离节点特征（不同距离的黄、蓝、红，部分上色用于区分）对于时空域中的有效的多尺度学习而言十分关键。` 
 
@@ -57,9 +51,9 @@ Another desirable characteristic of robust algorithms is the ability to leverage
 ​    Another relevant work is GR-GCN [^8], which merges every three frames over the skeleton graph sequence and adds sparsified edges between adjacent frames. `另一个相关的工作是GR-GCN，它在骨架图序列上每三帧合并一次，并在相邻帧之间添加稀疏边。` Whereas GR-GCN also deploys cross-spacetime edges, our G3D module has several important distinctions: `虽然GR-GCN也应用了跨时空边，但跟我们的G3D模块有几个重要区别：`(1) Cross-spacetime edges in G3D follow the semantic human skeleton, which is naturally a more interpretable and more robust representation than the sparsified, one-size-fits-all graph in GR-GCN. The underlying graph is also much easier to compute. `（1）G3D中的跨时空边遵循语义人体骨架，与GR-GCN中稀疏的、一刀切的图相比，G3D中的跨时空边自然是一种更可解释、更健壮的表示。底层图形也更容易计算。` (2) GR-GCN has cross-spacetime edges only between adjacent frames, which prevents it to reason beyond a limited temporal context of three frames. `（2）GR-GCN仅在相邻帧之间具有跨时空边，这使其无法推理超出三个帧的有限时间范围。` (3) G3D can learn from multiple temporal contexts simultaneously leveraging different window sizes and dilations, which is not addressed in GR-GCN. `（3）G3D可以同时利用不同的窗口大小和膨胀从多个时间上下文中学习，这在GR-GCN中没有解决。` 
 
 ## 3. MS-G3D
-> ![](https://github.com/cnwxi/Note-of-MS-G3D/tree/main/image/2.png)
+> ![](https://github.com/cnwxi/Note-of-MS-G3D/tree/main/image/Figure2.png)
 >
-> ![](./image/2.png)
+> ![](./image/Figure2.png)
 >
 > Figure 2: Illustration of the biased weighting problem and the proposed disentangled aggregation scheme. `图二：偏差问题和所提出得解耦聚合方案的图解。` Darker color indicates higher weighting to the central node (red). `颜色越深表示对于中心节点的权重越大（红色）。` Top left: closer nodes receive higher weighting from adjacency powering, which makes long-range modeling less effective, especially when multiple scales are aggregated. `左上角：越近的节点从邻接矩阵获得更高的权重，这会降低长期建模的效率，特别是在聚合多个尺度时。` Bottom left: our proposed disentangled aggregation models joint relationships at each neighborhood while keeping identity features. `左下：我们提出的解缠结聚合模型在保持自身特征的同时，对每个邻域的关节关系进行建模。` Right: Visualizing the corresponding adjacency matrices. Node self-loops are omitted for visual clarity. `右：可视化相应的邻接矩阵。 为了视觉清晰，省略了节点自环。`
 ### 3.1. Preliminaries 
@@ -137,9 +131,9 @@ where  $\widetilde{\mathbf{A}}_{(\tau,k)}$ and $\widetilde{\mathbf{D}}_{(\tau,k)
 
 ### 3.4. Model Architecture
 
-> ![](https://github.com/cnwxi/Note-of-MS-G3D/tree/main/image/3.png)
+> ![](https://github.com/cnwxi/Note-of-MS-G3D/tree/main/image/Figure3.png)
 >
-> ![](./image/3.png)
+> ![](./image/Figure3.png)
 >
 > Figure 3: (Match components with colors) **Architecture Overview**. “TCN”, “GCN”, prefix “MS-”, and suffix “-D” denotes temporal and graph convolutional blocks, and multi-scale and disentangled aggregation, respectively (Section 3.2). `架构概述：“TCN”、“GCN”、前缀“MS-”和后缀“-D”分别表示时间卷积块和图卷积块，以及多尺度和解缠聚集(第3.2节)。` Each of the $r$ STGC blocks (b) deploys a multi-pathway design to capture long-range and regional spatial-temporal dependencies simultaneously. `r个STGC块(b)中的每一个都使用了多分支设计，以同时捕获长期的和区域时空依赖关系。` **Dotted modules**, including extra G3D pathway, 1×1 conv, and strided temporal convolutions, are situational for model performance/complexity trade-off. `虚线模块：包括额外的G3D分支、1×1卷积层和跨步时间卷积，根据情况权衡模型的性能/复杂性。`
 
@@ -147,15 +141,82 @@ where  $\widetilde{\mathbf{A}}_{(\tau,k)}$ and $\widetilde{\mathbf{D}}_{(\tau,k)
 
 **Multi-Scale Temporal Modeling.** `多尺度时间建模。` The spatial-temporal windows $\mathcal{G}{(\tau)}$ used by G3D are a closed structure by themselves, which means G3D must be accompanied by temporal modules for cross-window information exchange. `G3D所使用的时空窗口G(τ)本身是一个封闭的结构，这意味着G3D必须伴随时间模块进行跨窗口信息交换。`  Many existing work [^50], [^18], [^33], [^32] [^21] performs temporal modeling using temporal convolutions with a fixed kernel size $k_t \times 1$ throughout the architecture. `许多现有工作在整个架构中使用具有固定大小为kt×1的卷积核的时间卷积对时间建模。` As a natural extension to our multi-scale spatial aggregation, we enhance vanilla temporal convolutional layers with multi-scale learning, as illustrated in Fig. 3(c). `我们用多尺度学习增强香草时间卷积层，如图3（c）所示。` To lower the computational costs due to the extra branches, we deploy a bottleneck design [37], fix kernel sizes at $3\times 1$, and use different dilation rates [53] instead of larger kernels for larger receptive fields. We also use residual connections [12] to facilitate training. `为了降低额外分支所带来的计算成本，我们采用了瓶颈设计，将卷积核大小固定为3×1，并使用不同的膨胀率，而不是更大的卷积核来获得更大的感受野。我们还使用残差连接来促进训练。`
 
-**Adaptive Graphs.** `自适应图`。 To improve the flexibility of graph convolutional layers which performs homogeneous neighborhood averaging, we add a simple learnable, unconstrained graph residual mask ${\mathbf A}^{res}$ inspired by [^33][^32] to every $\tilde{\mathbf{A}}_{(K)}$ and $\tilde{\mathbf{A}}_{(\tau, k)}$ to strengthen, weaken, add, or remove edges dynamically. ` 为了提高执行同类邻域平均化的图卷积层的灵活性，我们给每个A~(K)和A~(τ,k)添加一个受[33][32]启发的简单的、可学习的、无约束的残缺掩码图Ares，以动态地加强、削弱、添加或删除边。` For example, Eq. 4 is updated to `例如，公式4更新为`
+**Adaptive Graphs.** `自适应图`。 To improve the flexibility of graph convolutional layers which performs homogeneous neighborhood averaging, we add a simple learnable, unconstrained graph residual mask ${\mathbf A}^{\text{res}}$ inspired by [^33][^32] to every $\tilde{\mathbf{A}}_{(K)}$ and $\tilde{\mathbf{A}}_{(\tau, k)}$ to strengthen, weaken, add, or remove edges dynamically. ` 为了提高执行同类邻域平均化的图卷积层的灵活性，我们给每个A~(K)和A~(τ,k)添加一个受[33][32]启发的简单的、可学习的、无约束的残缺掩码图Ares，以动态地加强、削弱、添加或删除边。` For example, Eq. 4 is updated to `例如，公式4更新为`
 $$
 \mathbf{X}_{t}^{(l+1)}=\sigma\left(\sum_{k=0}^{K} \tilde{\mathbf{D}}_{(k)}^{-\frac{1}{2}}\left(\tilde{\mathbf{A}}_{(k)}+\mathbf{A}_{(k)}^{\mathrm{res}}\right) \tilde{\mathbf{D}}_{(k)}^{-\frac{1}{2}} \mathbf{X}_{t}^{(l)} \Theta_{(k)}^{(l)}\right)
 $$
-${\mathbf A}^{res}$ is initialized with random values around zero and is different for each $k$ and $τ$, allowing each multi-scale context (either spatial or spatial-temporal) to select the best suited mask. `Ares被初始化为0左右的随机值，并且对于每个k和τ是不同的，使得每个多尺度上下文（空间或时空）选择最适合的掩码。` Note also that since ${\mathbf A}^{res}$ is optimized for all possible actions, which may have different optimal edge sets for feature propagation, it is expected to give minor edge corrections and may be insufficient when the graph structures have major deficiencies. `还要注意的是，由于Ares针对所有可能的动作进行了优化，这些动作可能具有不同的用于特征传播的最佳边集，因此预计它会给出较小的边校正，并且当图结构具有重大缺陷时可能是不够的。` In particular, ${\mathbf A}^{res}$ only partially mitigates the biased weighting problem (see Section 4.3). `特别是，Ares仅部分缓解了偏向加权问题（参见第4.3节）。`
+${\mathbf A}^{\text{res}}$ is initialized with random values around zero and is different for each $k$ and $τ$, allowing each multi-scale context (either spatial or spatial-temporal) to select the best suited mask. `Ares被初始化为0左右的随机值，并且对于每个k和τ是不同的，使得每个多尺度上下文（空间或时空）选择最适合的掩码。` Note also that since ${\mathbf A}^{\text{res}}$ is optimized for all possible actions, which may have different optimal edge sets for feature propagation, it is expected to give minor edge corrections and may be insufficient when the graph structures have major deficiencies. `还要注意的是，由于Ares针对所有可能的动作进行了优化，这些动作可能具有不同的用于特征传播的最佳边集，因此预计它会给出较小的边校正，并且当图结构具有重大缺陷时可能是不够的。` In particular, ${\mathbf A}^{\text{res}}$ only partially mitigates the biased weighting problem (see Section 4.3). `特别是，Ares仅部分缓解了偏向加权问题（参见第4.3节）。`
 
 **Joint-Bone Two-Stream Fusion.** `关节-骨骼双流融合。` Inspired by the two-stream methods in [^33][^32][^34] and the intuition that visualizing bones along with joints can help humans recognize skeleton actions, we use a two-stream framework where a separate model with identical architecture is trained using the bone features initialized as vector differences of adjacent joints directed away from the body center. `受到[33][32][34]等工作中的双流方法的启发，以及可视化骨骼和关节可以帮助人类识别骨骼动作的直观，我们使用了一个双流框架，其中具有相同架构的单独模型使用被初始化为远离身体中心的相邻关节矢量差的骨骼特征来训练。` The softmax scores from the joint/bone models are summed to obtain final prediction scores. Since skeleton graphs are trees, we add a zero bone vector at the body center to obtain N bones from $N$ joints and reuse $\mathbf{A}$ for connectivity definition. `来自关节/骨骼模型的softmax得分相加以获得最终预测得分。由于骨架图是树，我们在身体中心添加一个零骨骼向量，以从N个关节获得N个骨骼，并重用A来定义连通性。`
 
 ## 4. Experiments
+
+### 4.1. Datasets
+
+**NTU RGB+D 60 and NTU RGB+D 120.** **NTU RGB+D 60** [^31] is a large-scale action recognition dataset containing 56,578 skeleton sequences over 60 action classes captured from 40 distinct subjects and 3 different camera view angles. ` NTU RGB+D60[31]是一个大规模的动作识别数据集，包含56578个骨骼序列，超过60个动作类别，采集自40个不同的对象和3个不同的摄像机视角` Each skeleton graph contains N = 25 body joints as nodes, with their 3D locations in space as initial features. `每个骨架图包含N=25个身体关节作为节点，其在空间中的3D位置作为初始特征。` Each frame of the action contains 1 to 2 subjects. `动作的每一帧包含1到2个对象。` The authors recommend reporting the classification accuracy under two settings: `作者建议报告两种情况下的分类准确性：` (1) Cross-Subject (X-Sub), where the 40 subjects are split into training and testing groups, yielding 40,091 and 16,487 training and testing examples respectively. `(1)交叉对象(X-Sub)，将40名对象分为训练组和测试组，分别产生40091个和16487个训练和测试样本。` (2) Cross-View (X-View), where all 18,932 samples collected from camera 1 are used for testing and the rest 37,646 samples used for training. `(2)交叉视图(X-View)，从1号摄像机收集的18,932个样本全部用于测试，其余37,646个样本用于训练。` **NTU RGB+D 120** [^25] extends NTU RGB+D 60 with an additional 57,367 skeleton sequences over 60 extra action classes, totaling 113,945
+samples over 120 classes captured from 106 distinct subjects and 32 different camera setups. `NTU RGB+D120扩展了NTU RGB+D 60，在60个额外的动作类别中增加了57367个骨骼序列，总计113945个样本，超过120个类别，来自106个不同的对象和32个不同的摄像机设备。` The authors now recommend replacing the Cross-View setting with a Cross-Setup (X-Set) setting, where 54,468 samples collected from half of the camera setups are used for training and the rest 59,477 samples for testing. `作者现在建议将交叉视图的设置替换为交叉设备(X-Set)设置，其中从一半相机设备中收集的54,468个样本用于训练，其余59,477个样本用于测试。` In Cross-Subject, 63,026 samples from a selected group of 53 subjects are used for training, and the rest 50,919 samples for testing. `在交叉对象方面，从53名受试者中挑选出63,026个样本用于训练，其余50,919个样本用于测试。`
+
+**Kinetics Skeleton 400.** The Kinetics Skeleton 400 dataset is adapted from the Kinetics 400 video dataset [^15] using the OpenPose [^4] pose estimation toolbox. `Kinetics Skeleton 400数据集是由OpenPose姿态估计工具箱从Kinetics 400视频数据集改编而来。` It contains 240,436 training and 19,796 testing skeleton sequences over 400 classes, where each skeleton graph contains 18 body joints, along with their 2D spatial coordinates and the prediction confidence score from OpenPose as the initial joint features [^50]. `它包含总计400个类别的240,436个训练骨架序列和19,796个测试骨架序列，其中每个骨架图包含18个身体关节，以及它们的2D空间坐标和来自OpenPose的预测置信度分数作为初始关节特征[50]。` At each time step, the number of skele-
+tons is capped at 2, and skeletons with lower overall confidence scores are discarded. Following the convention from [^15][^50], Top-1 and Top-5 accuracies are reported. `在每个时间步长，骨架数量上限为2，总体置信度分数较低的骨架将被丢弃。 按照[15][50]中的会议，报告了Top-1和Top-5的精确度。`
+
+### 4.2. Implementation Details
+
+Unless otherwise stated, all models have r = 3 and are trained with SGD with momentum 0.9, batch size 32 (16 per worker), an initial learning rate 0.05 (can linearly scale up with batch size [9]) for 50, 60, and 65 epochs with step LR decay with a factor of 0.1 at epochs {30, 40}, {30, 50}, and {45, 55}for NTU RGB+D 60, 120, and Kinetics Skeleton 400, respectively. `除非另有说明，否则所有模型的r = 3并以SGD进行训练，其动量为0.9，批大小为32，初始学习率为0.05（可以按批量大小线性扩展）对于50、60和65个训练迭代， 对于NTU RGB + D 60、120和Kinetics Skeleton 400，分别在{30，40}，{30，50}和{45，55}个时期，受到LR衰减的0.1个学习率减少。` Weight decay is set to 0.0005 for final models and is adjusted accordingly during component studies. All skeleton sequences are padded to T = 300 frames by replaying the actions. `最终模型的“权重衰减”设置为0.0005，并在组件研究期间进行相应调整。通过重放动作将所有骨架序列填充到T=300帧。` Inputs are preprocessed with normalization and translation following [33, 32]. No data augmentation is used for fair performance comparison. `在之后，使用归一化和转化对输入进行预处理。不使用数据增强来进行公平的性能比较。`
+
+### 4.3. Component Studies
+
+> ![](https://github.com/cnwxi/Note-of-MS-G3D/tree/main/image/Table1.png)
+>
+> ![](.\image\Table1.png)
+>
+> Table 1: Accuracy (%) with multi-scale aggregation on individual pathways of STGC blocks with different K. “Mask” refers to the residual masks $\mathbf{A}^{\text{res}}$ . If $K>1$, GCN/G3D is Multi-Scale (MS-). `表1：具有不同K的STGC块的单个路径上的多尺度聚集的准确性(%)。 “掩码”是指残缺掩码Ares。 如果K>1，则GCN/G3D为多尺度(MS-)。`
+>
+> ![](https://github.com/cnwxi/Note-of-MS-G3D/tree/main/image/Table2.png)
+>
+> ![](./image/Table2.png)
+>
+> Table 2: Model accuracy with various settings. MS-GCN and MS-G3D uses $K\in\{12，5\}$ respectively. $^†$Output channels double at the collapse window layer (Fig. 3(d), $C_{mid}$ to $C_{out}$ ) instead of at the graph convolution ($C_{in}$ to $C_{mid}$) to maintain similar budget. `表2：各种设置下的模型精度。 MS-GCN和MS-G3D分别使用K∈{12，5}。†输出通道在折叠窗口层（图3(D)，Cmid到Cout）加倍，而不是在图形卷积（Cin到Cmid），以维持相似的预算。`
+>
+> ![](https://github.com/cnwxi/Note-of-MS-G3D/tree/main/image/Table3.png)
+>
+> ![](./image/Table3.png)
+>
+> Table 3: Comparing graph connectivity settings ($\tau=3$，$d=2$) . `表3：比较图连接性设置(τ=3，d=2)。`
+
+We analyze the individual components and their configurations in the final architecture. Unless stated, performance is reported as classification accuracy on the Cross-Subject setting of NTU RGB+D 60 using only the joint data. `我们在最终的架构中分析各个组件及其配置。除非另有说明，性能报告为仅使用关节数据的NTU RGB+D 60交叉对象设置的分类精度。`
+
+**Disentangled Multi-Scale Aggregation. ** `解缠的多尺度聚合` We first justify our proposed disentangled multi-scale aggregation scheme by verifying its effectiveness with different number of scales over sparse and dense graphs. `我们首先通过在稀疏和稠密图上验证其在不同尺度数下的有效性来证明提出的解缠多尺度聚集方案的有效性。` In Table 1, we do so using the individual pathways of the STGC blocks (Fig. 3(b)), referred to as “GCN” and “G3D”, respectively, with suffixes “-E” and “-D” denoting adjacency powering and disentangled aggregation. `在表1中，我们使用STGC块（图3(b)）的单独路径，分别称为“GCN”和“G3D”，后缀“-E”和“-D”表示邻接矩阵高次幂和解缠。` Here, the maximum $K = 12$ is the diameter of skeleton graphs from NTU RGB+D 60, and we set $\tau=5$ for G3D modules. `这里，最大K=12是来自NTU RGB+d60的骨架图的直径，对于G3D模块，我们设置τ=5。` To keep consistent normalization, we set $\widehat{\mathbf{A}}=\tilde{\mathbf{D}}^{-\frac{1}{2}} \tilde{\mathbf{A}} \tilde{\mathbf{D}}^{-\frac{1}{2}}$ in Eq. 2 for GCN-E and G3D-E. `为了保持一致的归一化，我们在公式2中为GCN-E和G3D-E设置了（公式略）。` We first observe that the disentangled formulation can bring as much as 1.4% gain over simple adjacency powering at $K = 4$, underpinning the necessity for neighborhood disentanglement. `我们首先观察到，分解的因式分解 比简单邻接矩阵幂在K=4时可带来高达1.4%的增益，支持邻域分解的必要性。` In this case, the residual mask $\mathbf{A}^\text{res}$ partially corrects the weighting imbalance, narrowing the largest gap to 0.4%. `在这种情况下，残缺掩码Ares部分校正了权重不平衡，将最大差距缩小到0.4%。` However, the same set of experiments on the G3D pathway, where the window graph $\mathcal{G}{(\tau)}$ is denser than the spatial graph $\mathcal{G}$, shows wider accuracy gaps between G3D-E and G3D-D, indicating a more severe biased weighting problem. `然而，在G3D路径上的同一组实验中，窗口图G(τ)比空间图G的密度更大，显示G3D-E和G3D-D之间的精度差距更大，这表明存在更严重的有偏加权问题。` In particular, we see 0.8% performance gap at $K = 12$ even if residual masks are added. `具体地说，即使添加残缺掩码，我们在K=12时也会看到0.8%的性能差距。` These results verify the effectiveness of the proposed disentangled aggregation scheme for multi-scale learning; it boosts performance across different number scales not only in the spatial domain, but more so in the spatial-temporal domain where it complements the proposed G3D module. `这些结果验证了所提出的解缠聚合方案在多尺度学习中的有效性；它不仅在空间域中提高了不同数字尺度上的性能，而且在时空域中更是如此，它补充了所提出的G3D模块。` In general, the spatial GCNs benefits more from large K than do the spatial-temporal G3D modules; for final architectures, we empirically set $K \in\{12,5\}$ for MS-GCN and MS-G3D blocks respectively. `一般来说，空间GCN比时空G3D模块从大K中获益更多；对于最终的体系结构，我们分别为MS-GCN和MS-G3D块分别设置K∈{12,5}。`
+
+**Effectiveness of G3D. ** `G3D的有效性` To validate the efficacy of G3D modules to capture complex spatial-temporal features, we build up the model incrementally with its individual components, and show its performance in Table 2. `为了验证G3D模块捕获复杂时空特征的有效性，我们使用其单独的组件逐步构建模型，并在表2中显示其性能。` We use the joint stream from 2s-AGCN [33] as the baseline for controlled experiments, and for fair comparison, we replaced its regular temporal convolutional layers with MS-TCN layers and obtained an improvement with less parameters. `我们使用来自2S-AGCN的关节流作为控制实验的基线，并且为了公平比较，我们用MS-TCN层替换其规则的时间卷积层，得到了参数量变少的改进。` First, we observe that the factorized pathway alone can outperform the baseline due to the powerful disentangled aggregation in MS-GCN. `首先，我们观察到，由于MS-GCN中强大的分离聚集作用，因式分解途径本身就可以优于基线。` However, if we simply scale up the factorized pathway to larger capacity (deeper and wider), or duplicate the factorized pathway to learn from different feature subspaces and mimic the multi-pathway design in STGC blocks, we observe limited gains. `然而，如果我们简单地将因式分解的路径放大到更大的容量（更深和更宽），或者复制因式分解的路径以从不同的特征子空间中学习并模仿STGC块中的多路径设计，我们观察到的收益是有限的。` In contrast, when the G3D pathway is added, we observe consistently better results with similar or less parameters, verifying G3D’s ability to pick up complex regional spatial-temporal correlations that are previously overlooked by modeling spatial and temporal dependencies in a factorized fashion. `相反,当添加G3D路径时，我们在相似或更少的参数下观察到一致更好的结果，验证了G3D提取复杂的区域时空相关性的能力，这些相关性以前通过以因式分解的方式建模空间和时间依赖而被忽略。`
+
+**Exploring G3D Configurations. ** `探索G3D配置` Table 2 also compares various G3D settings, including different values of $\tau$, $d$, and the number of G3D pathways in STGC blocks. `表2还比较了各种G3D设置，包括不同的τ、d值和STGC块中G3D路径的数量。` We first observe that all configurations consistently outperform the baseline, confirming the stability of MS-G3D as a robust feature extractor. `首先，我们观察到所有的配置一致地优于基线，证实了MS-G3D作为一个健壮的特征提取器的稳定性。` We also see that $\tau = 5$ give slightly better results, but the gain diminishes at $\tau = 7$ as the aggregated features become too generic due to the oversized local spatial-temporal neighborhood, thus counteracting the benefits of larger temporal coverage. `我们还发现τ=5的结果稍好一些，但在τ=7时，由于局部时空邻域过大，聚集的特征变得过于通用，因此抵消了较大时间覆盖的好处。` The dilation rate d has varying effects: `扩张率d具有不同的影响：` (1) when $\tau = 3$, $d = 1$ underperforms $d \in \{2,3\}$, justifying the need for larger temporal contexts; `（1）当τ=3时，d=1的性能低于d∈{2,3}，证明需要更大的时间上下文；` (2) larger d has marginal benefits, as its larger temporal coverage come at a cost of temporal resolution (thus coarsened skeleton motions). We thus observe better results when two G3D pathways with $d = (1,2)$ are combined, and as expected, we obtain the best results when the temporal resolution is unaltered by setting $\tau = (3,5)$. `（2）更大的d具有边际效益，因为其更大的时间覆盖以时间分辨率为代价(从而使骨骼运动粗糙)。因此，当d=(1,2)的两条G3D路径组合时，我们观察到更好的结果,不出所料，当时间分辨率通过设置τ=(3,5)保持不变时，我们获得了最好的结果。`
+
+**Cross-spacetime Connectivity. ** `跨时空连接性` To demonstrate the need for cross-spacetime edges in $\mathcal{G}{(\tau)}$ defined in Eq. 5 instead of simple, grid-like temporal self-edges (on which G3D also applies), we contrast different connectivity schemes in Table 3 while fixing other parts of the architecture. `为了证明在公式5中定义的G(τ)中需要跨时空边，而不是简单的、类似网格的时间自边（G3D也适用于此），我们对比了表3中的不同连接方案，同时固定了架构的其他部分。` The first two settings refer to modifying the block adjacency matrix $\tilde{\mathbf{A}}_{(\tau)}$ such that: `前两个设置指的是修改块邻接矩阵A~(τ)，使得` (1) the blocks $\tilde{\mathbf{A}}$ on the main diagonal are kept, the blocks on superdiagonal/subdiagonal is set to $\mathbf{I}$, and the rest set to $\mathbf{0}$; `（1） 保留主对角线上的块A~，将超对角线对角线上的块设置为I，其余设置为0；` and (2) all blocks but the main diagonal of  $\tilde{\mathbf{A}}$ are set to $\mathbf{I}$. `(2)除主对角线的A~的外的所有块均设置为I。` Intuitively, the first produces “3D grid” graphs and the second includes extra dense self-edges over τ frames. `第一种方法生成“3D网格”图形，第二种方法在帧上包含额外密集的自边。` Clearly, while all settings allow unified spatial-temporal graph convolutions, cross-spacetime edges as skip connections are essential for efficient information flow. `显然，虽然所有的设置都允许统一的时空图形卷积，但作为跳过连接的跨时空边对于有效的信息流是必不可少的。`
+
+ **Joint-Bone Two-Stream Fusion. **`关节-骨骼双流融合` We verify our method under the joint-bone fusion framework on the NTU RGB+D 60 dataset in Table 5. ` 我们在NTU RGB+D60数据集上验证了我们在关节骨骼融合框架下的方法（表5中）。` Similar to [33], we obtain best performance when joint and bone features are fused, indicating the generalizability of our method to other input modalities. `与[33]相似，我们在融合关节和骨骼特征时获得了最佳性能，这表明我们的方法可以推广到其他输入模式。`
+
+### 4.4. Comparison against the State-of-the-Art
+
+> ![](https://github.com/cnwxi/Note-of-MS-G3D/tree/main/image/Table4.png)
+>
+> ![](./image/Table4.png)
+>
+> Table 4: Classification accuracy comparison against state-of-the-art methods on the NTU RGB+D 120 Skeleton dataset. `表4：在NTU RGB+D 120骨骼数据集上的分类精度与最新方法的比较。`
+>
+> ![](https://github.com/cnwxi/Note-of-MS-G3D/tree/main/image/Table5.png)
+>
+> ![](./image/Table5.png)
+>
+> Table 5: Classification accuracy comparison against state-of-the-art methods on the NTU RGB+D 60 Skeleton dataset. `表5：NTU RGB+D60骨架数据集分类精度与最新方法的比较。`
+>
+> ![](https://github.com/cnwxi/Note-of-MS-G3D/tree/main/image/Table6.png)
+>
+> ![](./image/Table6.png)
+>
+> Table 6: Classification accuracy comparison against state-of-the-art methods on the Kinetics Skeleton 400 dataset. `表6：Kinetics Skeleton 400数据集上的分类精度与最新方法的比较。`
+
+We compare our full model (Fig. 3(a)) to the state-of-the-art in Tables 4, 5, and 6. Table 4 compares non-graph [^26][^27][^16][^28] and graph-based methods [^33]. Table 5 compares non-graph methods [^23][^20], graph-based methods with spatial edges [^18][^21][^33][^34][^32] and with spatial-temporal edges [^8]. Table 6 compares single-stream [^50][^21] and multi-stream [^18][^33][^32] methods. On all three large-scale datasets, our method outperforms all existing methods
+under all evaluation settings. Notably, our method is the first to apply a multi-pathway design to learn both long-range spatial and temporal dependencies and complex regional spatial-temporal correlations from skeleton sequences, and the results verify the effectiveness of our approach.
 
 ## 5. Conclusion
 
